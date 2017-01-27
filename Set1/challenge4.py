@@ -30,7 +30,7 @@ def find_xored_string(score_list):
 
 
 if __name__ == '__main__':
-    hexed_text = import_string_from_file("..\\includes\\4.txt")
+    hexed_text = import_string_from_file("..\\resources\\4.txt")
     scores_list = get_score_for_list(hexed_text)
     xored_key_index = find_xored_string(scores_list)
     message = decrypt_sk_xor_message(hexed_text[xored_key_index[1]], xored_key_index[0])
