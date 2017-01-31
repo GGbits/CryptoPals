@@ -56,7 +56,10 @@ def get_xor_score(encoded_string, key):
     Returns:
         the points (int) score of the key used
     """
-    unhexed_string = binascii.unhexlify(encoded_string)
+    if type(encoded_string) is hex:
+        unhexed_string = binascii.unhexlify(encoded_string)
+    else:
+        unhexed_string = encoded_string
     char_list = [char ^ key for char in unhexed_string]
     points = 0
     for int_val in char_list:
@@ -98,6 +101,7 @@ def decrypt_sk_xor_message(encoded_string, key):
 
 
 if __name__ == '__main__':
+
     KEY = find_single_xor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
     MESSAGE = decrypt_sk_xor_message("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736", KEY[0])
     print("Key: " + chr(KEY[0]) + "\nMessage: " + MESSAGE)

@@ -44,7 +44,7 @@
 import base64
 import binascii
 from challenge4 import import_string_from_file
-
+from challenge3 import find_single_xor
 
 def is_ascii(s):
     return all(ord(c) < 128 for c in s)
@@ -59,12 +59,19 @@ def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
     return bits.zfill(8 * ((len(bits) + 7) // 8))
 
 
+def bytes_to_bits(text):
+    bits = bin(int(binascii.hexlify(text), 16))[2:]
+    return bits.zfill(8 * ((len(bits) + 7) // 8))
+
+
 def hamming_distance(string1, string2):
     assert len(string1) == len(string2)
     if type(string1) is str and type(string2 is str):
         string1 = text_to_bits(string1)
         string2 = text_to_bits(string2)
-    # TODO: if byte array, turn into binary string
+    if type(string1) is bytes and type(string2 is bytes):
+        string1 = bytes_to_bits(string1)
+        string2 = bytes_to_bits(string2)
     counter = 0
     for b1, b2 in zip(string1, string2):
         if b1 != b2:
@@ -83,14 +90,30 @@ def find_key_length(bin_string):
             hd_string2 = bin_string[counter + keysize: counter + keysize * 2]
             hamming_temp.append(hamming_distance(hd_string1, hd_string2))
             counter += keysize * 2
-        hamming_results.append({"keysize": keysize, "hamming": sum(hamming_temp) / float(len(hamming_temp))})
+        hamming_results.append({"keysize": keysize, "hamming": sum(hamming_temp) /
+                                (float(len(hamming_temp)) * keysize)})
         keysize += 1
-    return min(iter(hamming_results), key=lambda x: x['hamming'])
+    return min(iter(hamming_results), key=lambda x: x['hamming'])['keysize']
+
+
+def split_decoded_string(decoded_byte_string, keysize):
+    split_list = []
+    for index in range(keysize):
+        split_list.append(decoded_byte_string[index::keysize])
+    return split_list
+
+
+def find_key(split_list):
+    key_list = []
+    for chunk in split_list:
+        key_list.append(chr(find_single_xor(chunk)[0]))
+    return ''.join(key_list)
 
 if __name__ == '__main__':
     b64_string = ''.join(import_string_from_file("..\\resources\\6.txt"))
     decoded_byte_string = decrypt_base64(b64_string)
-    print(decoded_byte_string)
-    print(type(decoded_byte_string))
-    print(hamming_distance("this is a test", "wokka wokka!!!"))
-    print(find_key_length(decoded_byte_string))
+    KEY_SIZE = find_key_length(decoded_byte_string)
+    chunk_list = split_decoded_string(decoded_byte_string, KEY_SIZE)
+    KEY = find_key(chunk_list)
+    print(KEY)
+
