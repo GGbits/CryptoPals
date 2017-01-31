@@ -28,7 +28,9 @@ def xor_repeting_key(string, key):
     # For each chr in string...
     for char in string:
         # convert the key chr and string chr to digits, XOR them, then take the XORed value and hex it into a list
-        xor_list.append(format(ord(char) ^ ord(key[key_index]), 'x').zfill(2))
+        if type(char) is str:
+            char = ord(char)
+        xor_list.append(format(char ^ ord(key[key_index]), 'x').zfill(2))
         # If we are at the last letter of the key, start over from the first letter, else, move onto the next letter
         if key_index >= len(key) - 1:
             key_index = 0

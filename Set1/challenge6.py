@@ -45,6 +45,7 @@ import base64
 import binascii
 from challenge4 import import_string_from_file
 from challenge3 import find_single_xor
+from challenge5 import xor_repeting_key
 
 def is_ascii(s):
     return all(ord(c) < 128 for c in s)
@@ -116,4 +117,4 @@ if __name__ == '__main__':
     chunk_list = split_decoded_string(decoded_byte_string, KEY_SIZE)
     KEY = find_key(chunk_list)
     print(KEY)
-
+    print(binascii.unhexlify(xor_repeting_key(decoded_byte_string, KEY)))
