@@ -24,6 +24,7 @@ from challenge9 import pad_text
 
 
 if __name__ == '__main__':
+    # TODO: This ECB Decrypts, need to work with it to make it CBC
     padded = pad_text("WHATS IN A NAME?", 16)
     print(padded)
     encrypted = encrypt_aes_128_ecb(padded, b'YELLOW SUBMARINE')

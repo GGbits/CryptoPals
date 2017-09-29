@@ -22,7 +22,7 @@ def pad_text(text, byte_length):
     if trail != byte_length:
         count = 0
         while count < trail:
-            binary_text += b'/x00'
+            binary_text += b'\x04'
             count += 1
     return binary_text.decode('UTF-8')
 
