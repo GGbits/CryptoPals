@@ -87,6 +87,11 @@ def get_score(encoded_string):
 
 
 def find_single_xor(encoded_string):
+    """
+    Iterate over thee common characters to find the key for the xor string
+    :param <string> encoded_string: single xor hex string
+    :return: <int>: xor key
+    """
     xor_dict = {}
     for i in range(32, 127):
         score = get_xor_score(encoded_string, i)
@@ -96,6 +101,12 @@ def find_single_xor(encoded_string):
 
 
 def decrypt_sk_xor_message(encoded_string, key):
+    """
+    decrypt "single character xor" string
+    :param <string> encoded_string: xor encrypted string
+    :param <int> key: xor key
+    :return: <string>: decrypted xor string
+    """
     unhexed_string = binascii.unhexlify(encoded_string)
     char_list = [chr(char ^ key) for char in unhexed_string]
     return ''.join(char_list)
