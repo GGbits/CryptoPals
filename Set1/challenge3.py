@@ -57,8 +57,9 @@ def get_xor_score(encoded_string, key):
     Returns:
         the points (int) score of the key used
     """
-    if all(c in string.hexdigits for c in encoded_string):
-        unhexed_string = binascii.unhexlify(encoded_string)
+    if type(encoded_string) is str:
+        if all(c in string.hexdigits for c in encoded_string):
+            unhexed_string = binascii.unhexlify(encoded_string)
     else:
         unhexed_string = encoded_string
     char_list = [char ^ key for char in unhexed_string]

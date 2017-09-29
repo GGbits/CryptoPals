@@ -66,6 +66,12 @@ def bytes_to_bits(text):
 
 
 def hamming_distance(string1, string2):
+    """
+    Take in two chunks of characters (str or bytes) and compute hamming distance
+    :param <bytes> or <str> string1: first chunk to compare
+    :param <bytes> or <str> string2: second chunk to compare
+    :return: <int>: hamming score
+    """
     assert len(string1) == len(string2)
     if type(string1) is str and type(string2 is str):
         string1 = text_to_bits(string1)
@@ -81,6 +87,11 @@ def hamming_distance(string1, string2):
 
 
 def find_key_length(bin_string):
+    """
+    Uses hamming distance comparision to score which keysize is most likely
+    :param <bytes> bin_string: decoded binary string to compare with
+    :return: <int>: keysize
+    """
     keysize = 2
     hamming_results = []
     while keysize < 41:
