@@ -20,6 +20,11 @@ def decrypt_aes_128_ecb(text, key):
     cipher = AES.new(key, AES.MODE_ECB)
     return cipher.decrypt(text)
 
+
+def encrypt_aes_128_ecb(text, key):
+    cipher = AES.new(key, AES.MODE_ECB)
+    return cipher.encrypt(text)
+
 if __name__ == '__main__':
     aes_string = base64.b64decode(''.join(import_string_from_file("..\\resources\\7.txt")))
     decrypted_string = decrypt_aes_128_ecb(aes_string, b'YELLOW SUBMARINE')

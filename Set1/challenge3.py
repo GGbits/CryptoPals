@@ -14,6 +14,7 @@
 
 import binascii
 import operator
+import string
 
 KEY = ""
 
@@ -56,7 +57,7 @@ def get_xor_score(encoded_string, key):
     Returns:
         the points (int) score of the key used
     """
-    if type(encoded_string) is hex:
+    if all(c in string.hexdigits for c in encoded_string):
         unhexed_string = binascii.unhexlify(encoded_string)
     else:
         unhexed_string = encoded_string
