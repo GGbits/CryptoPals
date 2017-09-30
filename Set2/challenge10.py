@@ -23,6 +23,7 @@ from challenge4 import import_string_from_file
 from challenge7 import decrypt_aes_128_ecb, encrypt_aes_128_ecb
 from challenge8 import chunks
 from challenge9 import pad_text
+import base64
 
 # Variables
 
@@ -41,9 +42,19 @@ def encrypt_cbc(message, key, iv, blocksize):
     return b"".join(encrypt_array)
 
 
+def decrypt_cbc(message, key, iv, blocksize):
+    decrypt_array = []
+    block_array = chunks(message, blocksize)
+    for i in range(0, len(block_array)):
+        decrypt_block = decrypt_aes_128_ecb(block_array[i], key)
+        unxor_block = bytes((b1 ^ b2) for b1, b2 in zip(decrypt_block, iv))
+        iv = block_array[i]
+        decrypt_array.append(unxor_block)
+    return b"".join(decrypt_array)
+
 if __name__ == '__main__':
     # TODO: This ECB Decrypts, need to work with it to make it CBC
-    string_to_encrypt = "\r\n".join(import_string_from_file("..\\resources\\10_mytest.txt")).encode()
-    encrypted_string = encrypt_cbc(string_to_encrypt, b"YELLOW SUBMARINE", init_vect, 16)
-    print(encrypted_string)
-    print(encrypted_string.decode("utf-8"))
+    string_to_decrypt = base64.b64decode("".join(import_string_from_file("..\\resources\\10.txt")))
+    decrypted = decrypt_cbc(string_to_decrypt, b'YELLOW SUBMARINE', init_vect, 16)
+    print(decrypted)
+

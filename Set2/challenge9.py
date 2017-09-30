@@ -27,7 +27,7 @@ def pad_text(text, byte_length):
         while count < trail:
             binary_text += b'\x04'
             count += 1
-    return binary_text.decode('UTF-8')
+    return binary_text
 
 if __name__ == '__main__':
     bin_data = pad_text("YELLOW SUBMARINE", 20)
