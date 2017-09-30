@@ -19,15 +19,31 @@
 # The file here is intelligible (somewhat) when CBC decrypted against "YELLOW SUBMARINE" with an IV of all ASCII 0
 # (\x00\x00\x00 &c)
 
+from challenge4 import import_string_from_file
 from challenge7 import decrypt_aes_128_ecb, encrypt_aes_128_ecb
+from challenge8 import chunks
 from challenge9 import pad_text
+
+# Variables
+
+init_vect = b"\x00" * 16
+
+
+def encrypt_cbc(message, key, iv, blocksize):
+    encrypt_array = []
+    block_array = chunks(message, blocksize)
+    if len(block_array[-1]) != blocksize:
+        block_array[-1] = pad_text(block_array[-1], 16)
+    for i in range(0, len(block_array)):
+        xor_block = bytes((b1 ^ b2) for b1, b2 in zip(block_array[i], iv))
+        iv = encrypt_aes_128_ecb(xor_block, key)
+        encrypt_array.append(iv)
+    return b"".join(encrypt_array)
 
 
 if __name__ == '__main__':
     # TODO: This ECB Decrypts, need to work with it to make it CBC
-    padded = pad_text("WHATS IN A NAME?", 16)
-    print(padded)
-    encrypted = encrypt_aes_128_ecb(padded, b'YELLOW SUBMARINE')
-    decrypted = decrypt_aes_128_ecb(encrypted, b'YELLOW SUBMARINE')
-    print(encrypted)
-    print(decrypted)
+    string_to_encrypt = "\r\n".join(import_string_from_file("..\\resources\\10_mytest.txt")).encode()
+    encrypted_string = encrypt_cbc(string_to_encrypt, b"YELLOW SUBMARINE", init_vect, 16)
+    print(encrypted_string)
+    print(encrypted_string.decode("utf-8"))

@@ -17,7 +17,10 @@
 
 
 def pad_text(text, byte_length):
-    binary_text = text.encode('UTF-8')
+    if type(text) is str:
+        binary_text = text.encode('UTF-8')
+    else:
+        binary_text = text
     trail = byte_length - len(binary_text) % byte_length
     if trail != byte_length:
         count = 0
