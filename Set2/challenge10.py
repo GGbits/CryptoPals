@@ -52,6 +52,27 @@ def decrypt_cbc(message, key, iv, blocksize):
         decrypt_array.append(unxor_block)
     return b"".join(decrypt_array)
 
+
+def encrypt_ecb(message, key):
+    encrypt_array = []
+    block_array = chunks(message, 16)
+    if len(block_array[-1]) != 16:
+        block_array[-1] = pad_text(block_array[-1], 16)
+    for i in range(0, len(block_array)):
+        ecb_block = encrypt_aes_128_ecb(block_array[i], key)
+        encrypt_array.append(ecb_block)
+    return b"".join(encrypt_array)
+
+
+def decrypt_ecb(message, key):
+    encrypt_array = []
+    block_array = chunks(message, 16)
+    for i in range(0, len(block_array)):
+        ecb_block = encrypt_aes_128_ecb(block_array[i], key)
+        encrypt_array.append(ecb_block)
+    return b"".join(encrypt_array)
+
+
 if __name__ == '__main__':
     # TODO: This ECB Decrypts, need to work with it to make it CBC
     string_to_decrypt = base64.b64decode("".join(import_string_from_file("..\\resources\\10.txt")))
