@@ -46,16 +46,17 @@
 # 6. Repeat for the next byte.
 
 from challenge10 import encrypt_ecb
-from challenge11 import detect_cbc_or_ebc
+from challenge11 import detect_cbc_or_ebc, random_aes_key
 import base64
 
 # Variables
-ecb_key = b"N38fjch93nchd9e^"
-string_to_encrypt = "A" * 80
+ecb_key = random_aes_key(16)
+buffer_text = b"A" * 47
 base64_provided_string = ("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
                           "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
                           "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
                           "YnkK")
+
 
 def append_b64_string(bin_string, b64_string):
     return bin_string + base64.b64decode(b64_string)
@@ -81,29 +82,30 @@ def get_unicode_character(int_code):
     return chr(int_code).encode()
 
 
-def find_last_byte(enc_block, key, test_message):
+def find_last_byte(enc_block, key, known_string):
     for i in range(0, 128):
-        guess = test_message + get_unicode_character(i)
+        guess = known_string + get_unicode_character(i)
         if enc_block == (encrypt_ecb(guess, key)):
-            return guess
+            return bytes([guess[-1]])
 
 
-def decrypt_ecb_string(enc_string, init_buff, key):
+def decrypt_ecb_string(appended_string, buffer_length, key):
     block_length = len(key)
     decrypt_array = []
-    # TODO: Fix - Getting stored as int instead of bytes
-    for c in init_buff:
-        decrypt_array.append(c)
-    for i in range(0, len(encrypted_string) - block_length):
-        block = find_last_byte(enc_string[i:block_length + i], key, b"".join(decrypt_array[i:block_length + i]))
-        decrypt_array.append(block[-1])
+    buff_array = []
+    for c in appended_string[buffer_length - block_length:buffer_length - 1]:
+        buff_array.append(bytes([c]))
+    for i in range(0, len(appended_message) - buffer_length):
+        known = b"".join(buff_array[i: i + block_length - 1])
+        encrypt_block = encrypt_ecb(appended_string[i + buffer_length - block_length + 1: i + buffer_length + 1], key)
+        decrypt_char = find_last_byte(encrypt_block, key, known)
+        decrypt_array.append(decrypt_char)
+        buff_array.append(decrypt_char)
     return b"".join(decrypt_array)
 
 if __name__ == '__main__':
-    appended_message = append_b64_string(string_to_encrypt.encode(), base64_provided_string)
+    appended_message = append_b64_string(buffer_text, base64_provided_string)
     encrypted_string = encrypt_ecb(appended_message, ecb_key)
-    print(encrypted_string)
-    # 1. Discover Block Size
     print("1. Detect Key Size:")
     key_length = find_key_length(encrypted_string, ecb_key, b"A")
     print(key_length)
@@ -113,5 +115,5 @@ if __name__ == '__main__':
     test_string = encrypt_ecb(append_b64_string(b"A" * 15, base64_provided_string), ecb_key)
     print(find_last_byte(test_string[0:16], ecb_key, b"A" * 15))
     print("6. Solve encrypted string")
-    print(decrypt_ecb_string(test_string, b"A" * 15, ecb_key))
+    print(decrypt_ecb_string(appended_message, 47, ecb_key))
 
