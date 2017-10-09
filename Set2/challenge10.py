@@ -68,7 +68,7 @@ def decrypt_ecb(message, key):
     encrypt_array = []
     block_array = chunks(message, 16)
     for i in range(0, len(block_array)):
-        ecb_block = encrypt_aes_128_ecb(block_array[i], key)
+        ecb_block = decrypt_aes_128_ecb(block_array[i], key)
         encrypt_array.append(ecb_block)
     return b"".join(encrypt_array)
 
